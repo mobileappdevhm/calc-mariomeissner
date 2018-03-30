@@ -1,5 +1,6 @@
 os:
   - linux
+language: android
 sudo: false
 addons:
   apt:
