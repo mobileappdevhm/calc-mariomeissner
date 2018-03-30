@@ -9,18 +9,26 @@ class Calculator extends StatefulWidget {
 
 class _CalculatorState extends State<Calculator> {
 
+  //This is the state of the calculator.
+  String firstNumber = "";
+  String secondNumber = "";
+  String op = "";
+  String display = "";
+  double result;
+
   @override
   build(BuildContext context){
     return new Material(
+      color: Colors.blue[200],
       child: new Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
 
         children: <Widget>[
-
+          const Divider(height: 300.0),
           //The display
           new Expanded(
             flex: 2,
-            child: new CalcDisplay("100")
+            child: new CalcDisplay(display)
           ),
           const Divider(height: 1.0),
           //The KeyPad
@@ -37,8 +45,96 @@ class _CalculatorState extends State<Calculator> {
   }
 
   void handle(value){
-    //TODO: Do something.
-    print("I got handleed");
+    
+    
+    setState((){
+       
+      if (value == "C"){
+        // Reset state
+        firstNumber = "";
+        secondNumber = "";
+        op = "";
+        result = null;
+        display = "";
+        
+      }
+
+      // User is imputting the second number.
+      // Wait for more digits or the equals sign.
+      // Ignore operators.
+      if (op != ""){
+
+        // If its not a number, it should only be the equals sign
+        if (!_isNumber(value)){
+          if (value == "="){
+            result = _calculate(firstNumber, op, secondNumber);
+            display = result.toString();
+
+            // Reset state
+            firstNumber = "";
+            secondNumber = "";
+            op = "";
+            result = null;
+          // If not equals sign, dont do anything.
+          } else {
+            //TODO: Do I need this else?
+          }
+        // If it is a number, add it to the secondNumber
+        } else {
+          secondNumber += value;
+          display = firstNumber + op + secondNumber;
+        }
+      
+      // User is imputting the first number. 
+      // Add more digits to the first number or get the operator.
+      // Ignore the equals sign.
+      // TODO: Do I need to check more cases?
+      } else {
+        
+        if (!_isNumber(value)){
+          // If its an operator and we still dont have first number then ignore
+          if (firstNumber != ""){
+            op = value;
+            display = firstNumber + op;
+          }
+          
+        } else {
+          firstNumber = firstNumber + value;
+          display = firstNumber;
+        }
+        // If first number was null, initialize and add
+
+      }
+
+    });
+  }
+
+  /// Tells if the element is a number or not.  
+  bool _isNumber(String element){
+    bool isInt = int.parse(element, onError: (source) => null) != null;
+    bool isPoint = (element == ".");
+    return isInt || isPoint;
+  }
+
+  double _calculate(String first, String op, String second){
+
+    double result;
+    double firstNumber, secondNumber;
+    try{
+      firstNumber = double.parse(first);
+      secondNumber = double.parse(second);
+    } on FormatException {
+      return double.nan;
+    }
+   
+    switch (op) {
+      case "x" : result = firstNumber * secondNumber; break;
+      case "/" : result = firstNumber / secondNumber; break;
+      case "+" : result = firstNumber + secondNumber; break;
+      case "-" : result = firstNumber - secondNumber; break;
+      default: print("Something went wrong in calculate function");
+      }
+    return result;
   }
 }
 

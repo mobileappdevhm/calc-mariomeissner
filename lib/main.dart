@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
-import './pages/calc_home.dart';
+import './calculator.dart';
+import 'package:flutter/rendering.dart';
 
 void main() {
+  debugPaintSizeEnabled = false;
   runApp(new MaterialApp(
-    home: new CalcHome(),
+    home: new Calculator(),
     )
   );
 }
